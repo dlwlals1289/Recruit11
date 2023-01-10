@@ -34,18 +34,22 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuth2UserService<OAuth2UserRequest,OAuth2User> delegate = new DefaultOAuth2UserService(); // 구현체
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
+        // 어떤 소셜로그인을 사용했는지
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
+        // 로그인을 위한 키
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
                 .getUserInfoEndpoint().getUserNameAttributeName();
+
 
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
 
         User user = saveOrUpdate(attributes);
         httpSession.setAttribute("user", new SessionUser(user));
 
-        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
-                attributes.getAttributes(),
-                attributes.getNameAttributeKey());
+//        return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRoleKey())),
+//                attributes.getAttributes(),
+//                attributes.getNameAttributeKey());
+        return new PrincipalDetails(user, oAuth2User.getAttributes());
     }
 
     private User saveOrUpdate(OAuthAttributes attributes) {

@@ -13,7 +13,11 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private int id;
+
+    @Column
+    private String username;
 
     @Column(nullable = false)
     private String name;
@@ -28,13 +32,20 @@ public class User {
     @Column(nullable = false)
     private com.recruit.recruit11.model.Role role;
 
+//    @Column
+//    private String provider;
+//    @Column
+//    private String providerId;
+
     @Builder
-    public User(String name, String email, String picture, Role role) {
+    public User(String username, String name, String email, String picture, Role role) {
+        this.username = username;
         this.name = name;
         this.email = email;
         this.picture = picture;
         this.role = role;
     }
+
 
     public User update(String name, String picture){
         this.name = name;
